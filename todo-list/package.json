@@ -1,8 +1,8 @@
 {
-  "name": "project-mongodb",
+  "name": "todo-list",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js"
@@ -10,10 +10,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "mongoose": "^8.20.0"
+    "mongoose": "^8.20.1"
   }
 }
