@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>My Project — HTML to Node</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Convert HTML to Node — Example</h1>
+
+    <!-- Classic form -->
+    <h2>Classic form (POST to /submit-form)</h2>
+    <form class="classic-form" action="/submit-form" method="POST" enctype="multipart/form-data">
+      <label>Name
+        <input type="text" name="name" required />
+      </label>
+
+      <label>Email
+        <input type="email" name="email" required />
+      </label>
+
+      <label>Avatar (file)
+        <input type="file" id="avatarInput" name="avatar" accept="image/*" />
+      </label>
+
+      <div id="avatarPreview" style="display:none; text-align:center;">
+        <p style="margin:8px 0 4px 0;">Selected file preview:</p>
+        <img id="avatarImg" alt="avatar preview" style="max-width:120px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);" />
+      </div>
+
+      <button type="submit">Submit Classic Form</button>
+    </form>
+
+    <hr/>
+
+    <!-- AJAX form -->
+    <h2>AJAX form (fetch) — sends JSON to /api/data</h2>
+    <form id="ajaxForm">
+      <label>Title
+        <input name="title" required />
+      </label>
+
+      <label>Comment
+        <input name="comment" required />
+      </label>
+
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button type="submit">Send via fetch</button>
+        <div id="ajaxMsg" aria-live="polite" style="min-width:160px"></div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Avatar preview for classic form
+    const avatarInput = document.getElementById('avatarInput');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const avatarImg = document.getElementById('avatarImg');
+
+    avatarInput.addEventListener('change', () => {
+      const file = avatarInput.files[0];
+      if (!file) {
+        avatarPreview.style.display = 'none';
+        avatarImg.src = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        avatarImg.src = e.target.result;
+        avatarPreview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // AJAX form submit (fetch JSON) with inline message instead of alert
+    document.getElementById('ajaxForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        title: form.title.value,
+        comment: form.comment.value
+      };
+
+      const msgEl = document.getElementById('ajaxMsg');
+      msgEl.className = ''; // clear classes
+      msgEl.textContent = 'Sending...';
+
+      try {
+        const res = await fetch('/api/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (!res.ok) throw new Error('Server error ' + res.status);
+
+        const json = await res.json();
+        msgEl.className = 'success';
+        msgEl.textContent = 'Server replied: ' + (json.message || 'Saved successfully');
+
+        // clear inputs after success
+        form.title.value = '';
+        form.comment.value = '';
+        setTimeout(() => { msgEl.textContent = ''; msgEl.className = ''; }, 3000);
+      } catch (err) {
+        console.error(err);
+        msgEl.className = 'error';
+        msgEl.textContent = 'Request failed';
+        setTimeout(() => { msgEl.textContent = ''; msgEl.className = ''; }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>
