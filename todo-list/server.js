@@ -1,11 +1,13 @@
 const express = require("express");
 const { connectDB } = require("./db");
 const User = require("./model")
-const bcrypt = require("bcryptjs")
 const app = express()
+const cors = require("cors")
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors({ origin: "http://localhost:5173/" })); 
+
 app.post("/addTask", async (req, res) => {
     const { task } = req.body
     if (!task) {
@@ -23,7 +25,7 @@ app.post("/addTask", async (req, res) => {
 })
 app.get("/getall", async (req, res) => {
     const allTask = await User.find()
-    res.status(201).json({ success: true, allTask })
+    res.status(200).json({ success: true, allTask })
 })
 
 app.get("/get/:id", async (req, res) => {
