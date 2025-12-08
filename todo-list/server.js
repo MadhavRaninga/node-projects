@@ -20,7 +20,7 @@ app.post("/addTask", async (req, res) => {
 
     const newTask = await User.create({
         task
-    })
+    })  
     res.status(201).json({ message: "Task Added Successfully.", newTask })
 })
 app.get("/getall", async (req, res) => {
